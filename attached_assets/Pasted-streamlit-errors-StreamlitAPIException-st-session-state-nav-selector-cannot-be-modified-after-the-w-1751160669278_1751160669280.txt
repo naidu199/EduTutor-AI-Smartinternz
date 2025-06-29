@@ -1,0 +1,37 @@
+streamlit.errors.StreamlitAPIException: st.session_state.nav_selector cannot be modified after the widget with key nav_selector is instantiated.
+
+Traceback:
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 128, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 669, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/app.py", line 90, in <module>
+    main()
+File "/home/runner/workspace/app.py", line 35, in main
+    show_authenticated_app()
+File "/home/runner/workspace/app.py", line 56, in show_authenticated_app
+    dashboard.show_dashboard()
+File "/home/runner/workspace/page_modules/dashboard.py", line 25, in show_dashboard
+    show_getting_started()
+File "/home/runner/workspace/page_modules/dashboard.py", line 147, in show_getting_started
+    st.session_state.nav_selector = "Take Quiz"
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/streamlit/runtime/metrics_util.py", line 443, in wrapped_func
+    result = non_optional_func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/streamlit/runtime/state/session_state_proxy.py", line 136, in __setattr__
+    self[key] = value
+    ~~~~^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/streamlit/runtime/metrics_util.py", line 443, in wrapped_func
+    result = non_optional_func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/streamlit/runtime/state/session_state_proxy.py", line 114, in __setitem__
+    get_session_state()[key] = value
+    ~~~~~~~~~~~~~~~~~~~^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/streamlit/runtime/state/safe_session_state.py", line 101, in __setitem__
+    self._state[key] = value
+    ~~~~~~~~~~~^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/streamlit/runtime/state/session_state.py", line 527, in __setitem__
+    raise StreamlitAPIException(

@@ -247,13 +247,11 @@ def show_quiz_results():
     with col2:
         if st.button("📊 View Analytics", use_container_width=True):
             reset_quiz_state()
-            st.session_state.nav_selector = "Analytics"
             st.rerun()
     
     with col3:
         if st.button("🏠 Back to Dashboard", use_container_width=True):
             reset_quiz_state()
-            st.session_state.nav_selector = "Dashboard"
             st.rerun()
 
 def reset_quiz_state():

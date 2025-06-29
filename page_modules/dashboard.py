@@ -144,8 +144,7 @@ def show_getting_started():
         )
         
         if st.button("Take Your First Quiz 🎯", type="primary"):
-            st.session_state.nav_selector = "Take Quiz"
-            st.rerun()
+            st.switch_page("page_modules/quiz.py")
     
     with col2:
         st.markdown(
@@ -190,15 +189,12 @@ def show_recommendations(quiz_history):
     
     with col1:
         if st.button("📝 New Quiz", use_container_width=True):
-            st.session_state.nav_selector = "Take Quiz"
             st.rerun()
     
     with col2:
         if st.button("📊 View Analytics", use_container_width=True):
-            st.session_state.nav_selector = "Analytics"
             st.rerun()
     
     with col3:
         if st.button("👤 Profile", use_container_width=True):
-            st.session_state.nav_selector = "Profile"
             st.rerun()
