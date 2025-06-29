@@ -84,13 +84,11 @@ def generate_quiz(subject: str, difficulty: str, num_questions: int):
             ai_service = AIService()
             
             if not ai_service.is_configured():
-                st.error(
-                    "⚠️ AI service not configured. Please contact your administrator.\n\n"
-                    "Required environment variables:\n"
-                    "- IBM_API_KEY\n"
-                    "- IBM_PROJECT_ID"
+                st.warning(
+                    "🤖 Running in Demo Mode\n\n"
+                    "The AI service is currently using demo content. "
+                    "Demo quizzes are available to showcase the platform's capabilities."
                 )
-                return
             
             quiz_data = ai_service.generate_quiz(subject, difficulty, num_questions)
             

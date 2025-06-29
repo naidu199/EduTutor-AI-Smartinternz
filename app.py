@@ -35,6 +35,13 @@ def main():
         show_authenticated_app()
 
 def show_authenticated_app():
+    # Check for page navigation requests
+    if 'requested_page' in st.session_state:
+        current_page = st.session_state.requested_page
+        del st.session_state.requested_page
+    else:
+        current_page = st.session_state.get('current_page', 'Dashboard')
+    
     # Sidebar navigation
     with st.sidebar:
         st.title("🎓 EduTutor AI")
@@ -44,12 +51,16 @@ def show_authenticated_app():
         page = st.selectbox(
             "Navigate to:",
             ["Dashboard", "Take Quiz", "Analytics", "Profile"],
+            index=["Dashboard", "Take Quiz", "Analytics", "Profile"].index(current_page) if current_page in ["Dashboard", "Take Quiz", "Analytics", "Profile"] else 0,
             key="nav_selector"
         )
         
         if st.button("Logout", type="secondary"):
             session_manager.logout()
             st.rerun()
+    
+    # Store current page
+    st.session_state.current_page = page
     
     # Main content area
     if page == "Dashboard":

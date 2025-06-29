@@ -107,7 +107,9 @@ EduTutor AI is a Streamlit-based educational platform that provides personalized
 - Rate limiting for AI service calls recommended
 
 ## Changelog
-- June 29, 2025. Initial setup
+- June 29, 2025: Initial setup with complete EduTutor AI platform
+- June 29, 2025: Fixed navigation issues and implemented demo mode for AI service
+- June 29, 2025: Added IBM Watson API integration with fallback demo content
 
 ## User Preferences
 

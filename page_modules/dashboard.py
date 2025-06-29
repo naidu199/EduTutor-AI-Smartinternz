@@ -144,7 +144,9 @@ def show_getting_started():
         )
         
         if st.button("Take Your First Quiz 🎯", type="primary"):
-            st.switch_page("page_modules/quiz.py")
+            # Use session state to trigger navigation in main app
+            st.session_state.requested_page = "Take Quiz"
+            st.rerun()
     
     with col2:
         st.markdown(
