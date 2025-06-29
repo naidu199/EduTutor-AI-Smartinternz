@@ -1,0 +1,65 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+ENV/
+
+# VS Code config
+.vscode/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Pytest
+.cache/
+
+# MyPy
+.mypy_cache/
+
+# Replit-specific
+.replit
+replit.nix
+replit.db
+*.sqlite3
+
+# Streamlit-specific
+.streamlit/secrets.toml
+.streamlit/config.toml
+
+# Logs and system files
+*.log
+*.swp
+.DS_Store
+Thumbs.db
+
+# Lock files
+Pipfile.lock
+poetry.lock
+uv.lock
