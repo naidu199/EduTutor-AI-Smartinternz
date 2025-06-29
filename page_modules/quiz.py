@@ -28,35 +28,106 @@ def show_quiz_page():
 
 def show_quiz_setup():
     """Display quiz configuration interface"""
-    st.subheader("🔧 Configure Your Quiz")
+    
+    # Initialize session state for selections
+    if 'selected_subject' not in st.session_state:
+        st.session_state.selected_subject = "Programming Fundamentals"
+    if 'selected_difficulty' not in st.session_state:
+        st.session_state.selected_difficulty = "Medium"
+    
+    st.markdown("""
+    <div style="text-align: center; padding: 1.5rem 0;">
+        <h2 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                   -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+                   background-clip: text;">
+            Configure Your AI-Powered Quiz
+        </h2>
+    </div>
+    """, unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
     with col1:
-        subject = st.selectbox(
-            "Select Subject:",
-            [
+        # Enhanced subject selection with categories
+        st.markdown("#### Choose Your Subject")
+        
+        subject_categories = {
+            "Computer Science & Engineering": [
+                "Data Structures & Algorithms",
+                "Programming Fundamentals",
+                "Database Systems",
+                "Software Engineering",
+                "Computer Networks",
+                "Operating Systems",
+                "Machine Learning",
+                "Artificial Intelligence",
+                "Cybersecurity",
+                "Web Development",
+                "Mobile App Development",
+                "Cloud Computing"
+            ],
+            "Engineering & Technology": [
+                "Electrical Engineering",
+                "Mechanical Engineering",
+                "Civil Engineering",
+                "Chemical Engineering",
+                "Electronics & Communication",
+                "Digital Signal Processing",
+                "Control Systems",
+                "Embedded Systems"
+            ],
+            "Mathematics & Sciences": [
                 "Mathematics",
-                "Science",
+                "Physics",
+                "Chemistry",
+                "Biology",
+                "Statistics",
+                "Discrete Mathematics",
+                "Linear Algebra",
+                "Calculus"
+            ],
+            "General Studies": [
                 "History",
                 "Literature",
                 "Geography",
-                "Computer Science",
-                "Biology",
-                "Chemistry",
-                "Physics",
                 "Psychology",
                 "Economics",
+                "Philosophy",
                 "Art History"
             ]
-        )
+        }
         
-        difficulty = st.selectbox(
-            "Select Difficulty:",
-            ["Easy", "Medium", "Hard"]
-        )
+        # Create expandable sections for each category
+        for category, subjects in subject_categories.items():
+            with st.expander(f"📚 {category}", expanded=(category == "Computer Science & Engineering")):
+                cols = st.columns(2)
+                for i, subject in enumerate(subjects):
+                    with cols[i % 2]:
+                        if st.button(f"{subject}", key=f"subject_{subject}", use_container_width=True):
+                            st.session_state.selected_subject = subject
+        
+        st.info(f"Selected: **{st.session_state.selected_subject}**")
     
     with col2:
+        st.markdown("#### Choose Difficulty Level")
+        
+        # Stylized difficulty selection
+        difficulty_options = [
+            {"name": "Beginner", "level": "Easy", "desc": "Perfect for getting started", "emoji": "🟢"},
+            {"name": "Intermediate", "level": "Medium", "desc": "Challenge your knowledge", "emoji": "🟡"},
+            {"name": "Advanced", "level": "Hard", "desc": "Test your expertise", "emoji": "🔴"}
+        ]
+        
+        for option in difficulty_options:
+            if st.button(
+                f"{option['emoji']} {option['name']}\n{option['desc']}", 
+                key=f"diff_{option['level']}", 
+                use_container_width=True
+            ):
+                st.session_state.selected_difficulty = option['level']
+            
+        st.info(f"Level: **{st.session_state.selected_difficulty}**")
+        
         num_questions = st.slider(
             "Number of Questions:",
             min_value=3,
@@ -64,17 +135,20 @@ def show_quiz_setup():
             value=5
         )
         
-        st.info(
-            f"📋 **Quiz Preview:**\n"
-            f"- Subject: {subject}\n"
-            f"- Difficulty: {difficulty}\n"
-            f"- Questions: {num_questions}\n"
-            f"- Estimated time: {num_questions * 2} minutes"
-        )
+        st.markdown(f"""
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    padding: 1rem; border-radius: 10px; color: white; margin: 1rem 0;">
+            <h4>Quiz Preview</h4>
+            <p><strong>Subject:</strong> {st.session_state.selected_subject}</p>
+            <p><strong>Difficulty:</strong> {st.session_state.selected_difficulty}</p>
+            <p><strong>Questions:</strong> {num_questions}</p>
+            <p><strong>Estimated Time:</strong> {num_questions * 2} minutes</p>
+        </div>
+        """, unsafe_allow_html=True)
     
     # Generate quiz button
-    if st.button("🚀 Generate Quiz", type="primary", use_container_width=True):
-        generate_quiz(subject, difficulty, num_questions)
+    if st.button("Generate Quiz", type="primary", use_container_width=True):
+        generate_quiz(st.session_state.selected_subject, st.session_state.selected_difficulty, num_questions)
 
 def generate_quiz(subject: str, difficulty: str, num_questions: int):
     """Generate a new quiz using AI service"""

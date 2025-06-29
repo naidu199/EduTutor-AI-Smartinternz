@@ -4,8 +4,19 @@ from utils.session_manager import SessionManager
 def show_login_page():
     """Display login and registration interface"""
     
-    st.title("🎓 Welcome to EduTutor AI")
-    st.markdown("### Your Personalized Learning Journey Starts Here")
+    # Hero section with gradient effect
+    st.markdown("""
+    <div style="text-align: center; padding: 2rem 0;">
+        <h1 style="font-size: 3.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                   -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+                   background-clip: text; margin-bottom: 0.5rem;">
+            🚀 EduTutor AI
+        </h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin-bottom: 2rem;">
+            Revolutionize Your Learning with AI-Powered Education
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Create tabs for login and registration
     tab1, tab2 = st.tabs(["Login", "Sign Up"])

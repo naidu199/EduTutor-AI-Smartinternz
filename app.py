@@ -44,18 +44,45 @@ def show_authenticated_app():
     
     # Sidebar navigation
     with st.sidebar:
-        st.title("🎓 EduTutor AI")
-        st.write(f"Welcome, {st.session_state.current_user}!")
+        st.markdown("""
+        <div style="text-align: center; padding: 1rem 0;">
+            <h2 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                       -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+                       background-clip: text; margin: 0;">
+                EduTutor AI
+            </h2>
+            <p style="color: #94a3b8; margin: 0.5rem 0;">Welcome back, {}</p>
+        </div>
+        """.format(st.session_state.current_user), unsafe_allow_html=True)
         
-        # Navigation menu
-        page = st.selectbox(
-            "Navigate to:",
-            ["Dashboard", "Take Quiz", "Analytics", "Profile"],
-            index=["Dashboard", "Take Quiz", "Analytics", "Profile"].index(current_page) if current_page in ["Dashboard", "Take Quiz", "Analytics", "Profile"] else 0,
-            key="nav_selector"
-        )
+        st.markdown("---")
         
-        if st.button("Logout", type="secondary"):
+        # Enhanced navigation with icons
+        nav_options = [
+            {"name": "Dashboard", "icon": "📊", "desc": "Overview & Progress"},
+            {"name": "Take Quiz", "icon": "🎯", "desc": "AI-Powered Quizzes"},
+            {"name": "Analytics", "icon": "📈", "desc": "Learning Insights"},
+            {"name": "Profile", "icon": "👤", "desc": "Account Settings"}
+        ]
+        
+        # Navigation buttons
+        selected_page = None
+        for option in nav_options:
+            is_current = option["name"] == current_page
+            
+            if st.button(
+                f"{option['icon']} {option['name']}\n{option['desc']}", 
+                key=f"nav_{option['name']}", 
+                use_container_width=True,
+                type="primary" if is_current else "secondary"
+            ):
+                selected_page = option["name"]
+        
+        page = selected_page if selected_page else current_page
+        
+        st.markdown("---")
+        
+        if st.button("🚪 Logout", type="secondary", use_container_width=True):
             session_manager.logout()
             st.rerun()
     

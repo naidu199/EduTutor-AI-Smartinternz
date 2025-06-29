@@ -8,7 +8,15 @@ from services.ai_service import AIService
 
 def show_dashboard():
     """Display the main dashboard"""
-    st.header("📊 Learning Dashboard")
+    
+    # Modern hero section
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                padding: 2rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 2.5rem;">🚀 Learning Dashboard</h1>
+        <p style="color: #e2e8f0; margin-top: 0.5rem; font-size: 1.1rem;">Track your progress and accelerate your learning journey</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     session_manager = SessionManager()
     user_stats = session_manager.get_user_stats()
@@ -31,29 +39,25 @@ def show_overview_metrics(user_stats):
     """Display key metrics in columns"""
     col1, col2, col3, col4 = st.columns(4)
     
-    with col1:
-        st.metric(
-            label="📝 Total Quizzes",
-            value=user_stats['total_quizzes']
-        )
+    # Gamified metrics with modern styling
+    metrics = [
+        {"label": "Quizzes Completed", "value": user_stats['total_quizzes'], "icon": "🎯", "color": "#3b82f6"},
+        {"label": "Average Score", "value": f"{user_stats['average_score']}%", "icon": "📊", "color": "#10b981"},
+        {"label": "Best Performance", "value": f"{user_stats['best_score']}%", "icon": "🏆", "color": "#f59e0b"},
+        {"label": "Favorite Subject", "value": user_stats['favorite_subject'], "icon": "💡", "color": "#8b5cf6"}
+    ]
     
-    with col2:
-        st.metric(
-            label="📈 Average Score",
-            value=f"{user_stats['average_score']}%"
-        )
-    
-    with col3:
-        st.metric(
-            label="🏆 Best Score",
-            value=f"{user_stats['best_score']}%"
-        )
-    
-    with col4:
-        st.metric(
-            label="📚 Favorite Subject",
-            value=user_stats['favorite_subject']
-        )
+    for i, (col, metric) in enumerate(zip([col1, col2, col3, col4], metrics)):
+        with col:
+            st.markdown(f"""
+            <div style="background: linear-gradient(135deg, {metric['color']}22 0%, {metric['color']}11 100%); 
+                        padding: 1.5rem; border-radius: 10px; border-left: 4px solid {metric['color']}; 
+                        text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">{metric['icon']}</div>
+                <div style="font-size: 1.8rem; font-weight: bold; color: {metric['color']};">{metric['value']}</div>
+                <div style="font-size: 0.9rem; color: #64748b; margin-top: 0.2rem;">{metric['label']}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
 def show_performance_charts(quiz_history):
     """Display performance visualization charts"""
@@ -131,34 +135,45 @@ def show_recent_activity(quiz_history):
 
 def show_getting_started():
     """Display getting started information for new users"""
-    st.subheader("🚀 Get Started with EduTutor AI")
+    
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                padding: 2rem; border-radius: 15px; margin: 2rem 0; text-align: center;">
+        <h2 style="color: white; margin: 0;">🚀 Welcome to EduTutor AI</h2>
+        <p style="color: #e2e8f0; margin: 1rem 0;">Your personalized learning journey starts here</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.info(
-            "**Welcome to EduTutor AI!** 🎉\n\n"
-            "Start your personalized learning journey by taking your first quiz. "
-            "Our AI-powered platform will adapt to your learning style and provide "
-            "detailed feedback to help you improve."
-        )
+        st.markdown("""
+        <div style="background: #1e293b; padding: 1.5rem; border-radius: 10px; border: 1px solid #334155;">
+            <h3 style="color: #f8fafc; margin-top: 0;">🎯 Get Started</h3>
+            <p style="color: #94a3b8; line-height: 1.6;">
+                Jump into your first AI-powered quiz and experience personalized learning. 
+                Our platform adapts to your pace and provides detailed insights to accelerate your growth.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
         
-        if st.button("Take Your First Quiz 🎯", type="primary"):
-            # Use session state to trigger navigation in main app
+        if st.button("Start Your First Quiz", type="primary", use_container_width=True):
             st.session_state.requested_page = "Take Quiz"
             st.rerun()
     
     with col2:
-        st.markdown(
-            """
-            ### ✨ Features You'll Love:
-            - **AI-Generated Quizzes**: Dynamic questions tailored to your level
-            - **Instant Feedback**: Detailed explanations for every answer
-            - **Progress Tracking**: Visual analytics of your learning journey
-            - **Personalized Recommendations**: AI-powered learning suggestions
-            - **Multiple Subjects**: Wide range of topics to explore
-            """
-        )
+        st.markdown("""
+        <div style="background: #1e293b; padding: 1.5rem; border-radius: 10px; border: 1px solid #334155;">
+            <h3 style="color: #f8fafc; margin-top: 0;">✨ Platform Features</h3>
+            <ul style="color: #94a3b8; line-height: 1.8; padding-left: 1.2rem;">
+                <li><strong>AI-Generated Content:</strong> Dynamic quizzes tailored to your level</li>
+                <li><strong>Instant Feedback:</strong> Detailed explanations for every answer</li>
+                <li><strong>Progress Analytics:</strong> Visual tracking of your learning journey</li>
+                <li><strong>Smart Recommendations:</strong> AI-powered learning suggestions</li>
+                <li><strong>Comprehensive Subjects:</strong> CS, Engineering, Math, and more</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
 
 def show_recommendations(quiz_history):
     """Display personalized learning recommendations"""

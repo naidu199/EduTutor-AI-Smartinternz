@@ -256,41 +256,155 @@ Please provide ONLY the JSON response with no additional formatting or text.
                     }
                 ]
             },
-            "Science": {
+            "Programming Fundamentals": {
                 "Easy": [
                     {
                         "id": 1,
-                        "question": "What planet is closest to the Sun?",
-                        "options": {"A": "Venus", "B": "Earth", "C": "Mercury", "D": "Mars"},
-                        "correct_answer": "C",
-                        "explanation": "Mercury is the closest planet to the Sun in our solar system.",
-                        "topic": "Solar System"
+                        "question": "What is a variable in programming?",
+                        "options": {"A": "A function", "B": "A storage location with a name", "C": "A loop", "D": "An error"},
+                        "correct_answer": "B",
+                        "explanation": "A variable is a storage location paired with an associated symbolic name that stores data.",
+                        "topic": "Basic Programming Concepts"
                     },
                     {
                         "id": 2,
-                        "question": "What gas do plants absorb from the atmosphere during photosynthesis?",
-                        "options": {"A": "Oxygen", "B": "Nitrogen", "C": "Carbon Dioxide", "D": "Hydrogen"},
+                        "question": "Which of the following is a programming language?",
+                        "options": {"A": "HTML", "B": "CSS", "C": "Python", "D": "JSON"},
                         "correct_answer": "C",
-                        "explanation": "Plants absorb carbon dioxide and release oxygen during photosynthesis.",
-                        "topic": "Photosynthesis"
+                        "explanation": "Python is a high-level programming language, while HTML and CSS are markup languages, and JSON is a data format.",
+                        "topic": "Programming Languages"
                     }
                 ],
                 "Medium": [
                     {
                         "id": 1,
-                        "question": "What is the chemical symbol for gold?",
-                        "options": {"A": "Go", "B": "Au", "C": "Ag", "D": "Gd"},
+                        "question": "What is the time complexity of binary search?",
+                        "options": {"A": "O(n)", "B": "O(log n)", "C": "O(n²)", "D": "O(1)"},
                         "correct_answer": "B",
-                        "explanation": "Au is the chemical symbol for gold, from the Latin word 'aurum'.",
-                        "topic": "Chemical Elements"
+                        "explanation": "Binary search has O(log n) time complexity because it eliminates half the search space with each comparison.",
+                        "topic": "Algorithm Analysis"
                     },
                     {
                         "id": 2,
-                        "question": "What force keeps planets in orbit around the Sun?",
-                        "options": {"A": "Magnetism", "B": "Nuclear force", "C": "Gravity", "D": "Electromagnetic force"},
+                        "question": "What is recursion in programming?",
+                        "options": {"A": "A loop", "B": "A function calling itself", "C": "An error", "D": "A data type"},
+                        "correct_answer": "B",
+                        "explanation": "Recursion is a programming technique where a function calls itself to solve smaller instances of the same problem.",
+                        "topic": "Programming Concepts"
+                    }
+                ]
+            },
+            "Data Structures & Algorithms": {
+                "Easy": [
+                    {
+                        "id": 1,
+                        "question": "What is an array?",
+                        "options": {"A": "A single variable", "B": "A collection of elements", "C": "A function", "D": "A loop"},
+                        "correct_answer": "B",
+                        "explanation": "An array is a data structure that stores a collection of elements, typically of the same type.",
+                        "topic": "Basic Data Structures"
+                    },
+                    {
+                        "id": 2,
+                        "question": "What does LIFO stand for?",
+                        "options": {"A": "Last In First Out", "B": "Last In Final Out", "C": "List In File Out", "D": "Loop In Function Out"},
+                        "correct_answer": "A",
+                        "explanation": "LIFO stands for Last In First Out, which is the principle behind stack data structure.",
+                        "topic": "Stack Operations"
+                    }
+                ],
+                "Medium": [
+                    {
+                        "id": 1,
+                        "question": "What is the average time complexity of hash table lookup?",
+                        "options": {"A": "O(n)", "B": "O(log n)", "C": "O(1)", "D": "O(n²)"},
                         "correct_answer": "C",
-                        "explanation": "Gravity is the force that keeps planets in orbit around the Sun.",
-                        "topic": "Physics - Forces"
+                        "explanation": "Hash tables provide O(1) average time complexity for lookup operations due to direct indexing.",
+                        "topic": "Hash Tables"
+                    },
+                    {
+                        "id": 2,
+                        "question": "Which traversal visits root node last?",
+                        "options": {"A": "Preorder", "B": "Inorder", "C": "Postorder", "D": "Level order"},
+                        "correct_answer": "C",
+                        "explanation": "In postorder traversal, we visit left subtree, then right subtree, and finally the root node.",
+                        "topic": "Tree Traversal"
+                    }
+                ]
+            },
+            "Web Development": {
+                "Easy": [
+                    {
+                        "id": 1,
+                        "question": "What does HTML stand for?",
+                        "options": {"A": "Hyper Text Markup Language", "B": "High Tech Modern Language", "C": "Home Tool Markup Language", "D": "Hyper Transfer Markup Language"},
+                        "correct_answer": "A",
+                        "explanation": "HTML stands for HyperText Markup Language, used for creating web pages.",
+                        "topic": "Web Fundamentals"
+                    },
+                    {
+                        "id": 2,
+                        "question": "Which HTTP method is used to retrieve data?",
+                        "options": {"A": "POST", "B": "GET", "C": "PUT", "D": "DELETE"},
+                        "correct_answer": "B",
+                        "explanation": "GET method is used to retrieve data from a server without modifying anything.",
+                        "topic": "HTTP Methods"
+                    }
+                ],
+                "Medium": [
+                    {
+                        "id": 1,
+                        "question": "What is the box model in CSS?",
+                        "options": {"A": "A design pattern", "B": "Content, padding, border, margin", "C": "A JavaScript framework", "D": "A database concept"},
+                        "correct_answer": "B",
+                        "explanation": "The CSS box model consists of content, padding, border, and margin areas around an element.",
+                        "topic": "CSS Layout"
+                    },
+                    {
+                        "id": 2,
+                        "question": "What is AJAX used for?",
+                        "options": {"A": "Styling web pages", "B": "Creating databases", "C": "Asynchronous web requests", "D": "Server configuration"},
+                        "correct_answer": "C",
+                        "explanation": "AJAX allows web pages to make asynchronous requests to update content without refreshing the entire page.",
+                        "topic": "Web Technologies"
+                    }
+                ]
+            },
+            "Database Systems": {
+                "Easy": [
+                    {
+                        "id": 1,
+                        "question": "What does SQL stand for?",
+                        "options": {"A": "Simple Query Language", "B": "Structured Query Language", "C": "System Query Language", "D": "Standard Query Language"},
+                        "correct_answer": "B",
+                        "explanation": "SQL stands for Structured Query Language, used for managing relational databases.",
+                        "topic": "Database Fundamentals"
+                    },
+                    {
+                        "id": 2,
+                        "question": "What is a primary key?",
+                        "options": {"A": "A backup key", "B": "A unique identifier for records", "C": "A password", "D": "A foreign reference"},
+                        "correct_answer": "B",
+                        "explanation": "A primary key uniquely identifies each record in a database table.",
+                        "topic": "Database Design"
+                    }
+                ],
+                "Medium": [
+                    {
+                        "id": 1,
+                        "question": "What is normalization in databases?",
+                        "options": {"A": "Data backup", "B": "Reducing data redundancy", "C": "Increasing performance", "D": "Data encryption"},
+                        "correct_answer": "B",
+                        "explanation": "Normalization is the process of organizing data to reduce redundancy and improve data integrity.",
+                        "topic": "Database Normalization"
+                    },
+                    {
+                        "id": 2,
+                        "question": "What is ACID in database transactions?",
+                        "options": {"A": "A programming language", "B": "Atomicity, Consistency, Isolation, Durability", "C": "A database type", "D": "A query optimization technique"},
+                        "correct_answer": "B",
+                        "explanation": "ACID represents four key properties of database transactions: Atomicity, Consistency, Isolation, and Durability.",
+                        "topic": "Transaction Properties"
                     }
                 ]
             }
