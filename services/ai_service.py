@@ -407,46 +407,183 @@ Please provide ONLY the JSON response with no additional formatting or text.
                         "topic": "Transaction Properties"
                     }
                 ]
+            },
+            "Mobile App Development": {
+                "Easy": [
+                    {
+                        "id": 1,
+                        "question": "What is Android Studio?",
+                        "options": {"A": "A music player", "B": "An integrated development environment", "C": "A mobile game", "D": "A web browser"},
+                        "correct_answer": "B",
+                        "explanation": "Android Studio is the official IDE for Android app development.",
+                        "topic": "Development Tools"
+                    },
+                    {
+                        "id": 2,
+                        "question": "Which language is primarily used for iOS development?",
+                        "options": {"A": "Java", "B": "Python", "C": "Swift", "D": "C++"},
+                        "correct_answer": "C",
+                        "explanation": "Swift is Apple's programming language for iOS, macOS, and other Apple platforms.",
+                        "topic": "iOS Development"
+                    },
+                    {
+                        "id": 3,
+                        "question": "What does APK stand for?",
+                        "options": {"A": "Android Package Kit", "B": "Application Package Kit", "C": "Android Program Kit", "D": "App Package Key"},
+                        "correct_answer": "A",
+                        "explanation": "APK stands for Android Package Kit, the file format for Android applications.",
+                        "topic": "Android Fundamentals"
+                    }
+                ],
+                "Medium": [
+                    {
+                        "id": 1,
+                        "question": "What is React Native used for?",
+                        "options": {"A": "Web development only", "B": "Cross-platform mobile development", "C": "Desktop applications", "D": "Server-side programming"},
+                        "correct_answer": "B",
+                        "explanation": "React Native allows developers to build mobile apps for both iOS and Android using JavaScript.",
+                        "topic": "Cross-platform Development"
+                    },
+                    {
+                        "id": 2,
+                        "question": "What is the purpose of Android manifest file?",
+                        "options": {"A": "Store user data", "B": "Define app permissions and components", "C": "Handle network requests", "D": "Manage app themes"},
+                        "correct_answer": "B",
+                        "explanation": "The Android manifest file declares app components, permissions, and other essential information.",
+                        "topic": "Android Architecture"
+                    },
+                    {
+                        "id": 3,
+                        "question": "What is MVP pattern in mobile development?",
+                        "options": {"A": "Model-View-Presenter", "B": "Mobile-View-Pattern", "C": "Multi-Version-Platform", "D": "Minimum-Viable-Product"},
+                        "correct_answer": "A",
+                        "explanation": "MVP (Model-View-Presenter) is an architectural pattern that separates concerns in mobile applications.",
+                        "topic": "Architecture Patterns"
+                    }
+                ]
+            },
+            "Machine Learning": {
+                "Easy": [
+                    {
+                        "id": 1,
+                        "question": "What is supervised learning?",
+                        "options": {"A": "Learning without data", "B": "Learning with labeled data", "C": "Learning by observation", "D": "Learning without algorithms"},
+                        "correct_answer": "B",
+                        "explanation": "Supervised learning uses labeled training data to learn patterns and make predictions.",
+                        "topic": "ML Fundamentals"
+                    },
+                    {
+                        "id": 2,
+                        "question": "What does AI stand for?",
+                        "options": {"A": "Automated Intelligence", "B": "Artificial Intelligence", "C": "Advanced Integration", "D": "Algorithm Implementation"},
+                        "correct_answer": "B",
+                        "explanation": "AI stands for Artificial Intelligence, the simulation of human intelligence in machines.",
+                        "topic": "AI Basics"
+                    }
+                ],
+                "Medium": [
+                    {
+                        "id": 1,
+                        "question": "What is overfitting in machine learning?",
+                        "options": {"A": "Model performs too well on training data", "B": "Model has too few parameters", "C": "Model trains too quickly", "D": "Model uses too little data"},
+                        "correct_answer": "A",
+                        "explanation": "Overfitting occurs when a model learns training data too well, including noise and outliers.",
+                        "topic": "Model Performance"
+                    },
+                    {
+                        "id": 2,
+                        "question": "What is a neural network?",
+                        "options": {"A": "A computer network", "B": "A biological system", "C": "A computational model inspired by brain", "D": "A database structure"},
+                        "correct_answer": "C",
+                        "explanation": "Neural networks are computational models inspired by biological neural networks in the brain.",
+                        "topic": "Deep Learning"
+                    }
+                ]
             }
         }
         
-        # Default questions for subjects not in demo
-        default_questions = [
-            {
-                "id": 1,
-                "question": f"This is a sample {difficulty.lower()} question about {subject}.",
-                "options": {
-                    "A": "Option A",
-                    "B": "Option B (Correct)",
-                    "C": "Option C", 
-                    "D": "Option D"
-                },
-                "correct_answer": "B",
-                "explanation": f"This is a demo explanation for a {subject} question at {difficulty.lower()} level.",
-                "topic": f"{subject} Fundamentals"
-            },
-            {
-                "id": 2,
-                "question": f"Another sample {difficulty.lower()} question about {subject}.",
-                "options": {
-                    "A": "First choice",
-                    "B": "Second choice",
-                    "C": "Third choice (Correct)",
-                    "D": "Fourth choice"
-                },
-                "correct_answer": "C",
-                "explanation": f"This demonstrates how {subject} concepts work at {difficulty.lower()} difficulty.",
-                "topic": f"Advanced {subject}"
+        # Generate multiple questions for each difficulty level to support user's choice
+        def generate_more_questions(base_questions, subject, difficulty, target_count):
+            """Generate additional questions by creating variations"""
+            if len(base_questions) >= target_count:
+                return base_questions[:target_count]
+            
+            additional_questions = []
+            question_templates = {
+                "Programming Fundamentals": [
+                    "What is the difference between a compiler and an interpreter?",
+                    "Which data type is used to store true/false values?",
+                    "What is the purpose of comments in code?",
+                ],
+                "Data Structures & Algorithms": [
+                    "What is the worst-case time complexity of quicksort?",
+                    "Which data structure uses FIFO principle?",
+                    "What is dynamic programming?",
+                ],
+                "Web Development": [
+                    "What is the difference between GET and POST methods?",
+                    "Which CSS property is used to change text color?",
+                    "What is responsive web design?",
+                ],
+                "Mobile App Development": [
+                    "What is the difference between native and hybrid apps?",
+                    "Which database is commonly used in mobile apps?",
+                    "What is the purpose of app lifecycle methods?",
+                ],
+                "Machine Learning": [
+                    "What is the difference between classification and regression?",
+                    "What is cross-validation in machine learning?",
+                    "What is gradient descent?",
+                ]
             }
-        ]
+            
+            # Add more questions if we have templates
+            if subject in question_templates:
+                templates = question_templates[subject]
+                for i, template in enumerate(templates):
+                    if len(base_questions) + len(additional_questions) >= target_count:
+                        break
+                    additional_questions.append({
+                        "id": len(base_questions) + i + 1,
+                        "question": template,
+                        "options": {
+                            "A": f"Option A for {subject}",
+                            "B": f"Correct answer for {subject}",
+                            "C": f"Option C for {subject}",
+                            "D": f"Option D for {subject}"
+                        },
+                        "correct_answer": "B",
+                        "explanation": f"This is a {difficulty.lower()} level question about {subject} concepts.",
+                        "topic": f"{subject} Advanced Topics"
+                    })
+            
+            return base_questions + additional_questions
         
         # Get appropriate questions
         if subject in demo_questions and difficulty in demo_questions[subject]:
             available_questions = demo_questions[subject][difficulty]
+            # Generate more questions if needed
+            if len(available_questions) < num_questions:
+                available_questions = generate_more_questions(available_questions, subject, difficulty, num_questions)
         else:
-            available_questions = default_questions
+            # For subjects not in demo_questions, create generic questions
+            available_questions = []
+            for i in range(num_questions):
+                available_questions.append({
+                    "id": i + 1,
+                    "question": f"Sample {difficulty.lower()} question {i+1} about {subject}.",
+                    "options": {
+                        "A": f"Option A for {subject}",
+                        "B": f"Correct answer for {subject}",
+                        "C": f"Option C for {subject}",
+                        "D": f"Option D for {subject}"
+                    },
+                    "correct_answer": "B",
+                    "explanation": f"This is a {difficulty.lower()} level question about {subject} concepts.",
+                    "topic": f"{subject} Fundamentals"
+                })
         
-        # Select questions based on num_questions
+        # Select exactly the number of questions requested
         selected_questions = available_questions[:num_questions]
         
         # Update question IDs to be sequential
