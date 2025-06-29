@@ -5,7 +5,7 @@ from typing import Dict, Any, List
 import logging
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)  # Changed to DEBUG for more detailed logging
 logger = logging.getLogger(__name__)
 
 try:
@@ -240,29 +240,30 @@ REQUIREMENTS:
 4. Questions should be appropriate for {difficulty.lower()} level
 5. Cover different aspects of {subject}
 
-RESPONSE FORMAT (JSON):
+CRITICAL: Return ONLY valid JSON in the exact format below. Do not include any text before or after the JSON.
+
 {{
-    "subject": "{subject}",
-    "difficulty": "{difficulty}",
-    "total_questions": {num_questions},
-    "questions": [
-        {{
-            "id": 1,
-            "question": "Your question here",
-            "options": {{
-                "A": "Option A",
-                "B": "Option B",
-                "C": "Option C",
-                "D": "Option D"
-            }},
-            "correct_answer": "A",
-            "explanation": "Explanation of correct answer",
-            "topic": "Specific topic"
-        }}
-    ]
+  "subject": "{subject}",
+  "difficulty": "{difficulty}",
+  "total_questions": {num_questions},
+  "questions": [
+    {{
+      "id": 1,
+      "question": "Your question here",
+      "options": {{
+        "A": "Option A",
+        "B": "Option B",
+        "C": "Option C",
+        "D": "Option D"
+      }},
+      "correct_answer": "A",
+      "explanation": "Explanation of correct answer",
+      "topic": "Specific topic"
+    }}
+  ]
 }}
 
-Please provide ONLY the JSON response, no additional text."""
+Make sure all property names are in double quotes and all string values are in double quotes. Return only the JSON, no additional text."""
 
         return f"{system_prompt}\n\n{user_prompt}"
 
@@ -273,30 +274,49 @@ Please provide ONLY the JSON response, no additional text."""
             text = generated_text.strip()
             logger.info(f"Parsing generated text: {text[:200]}...")
 
+            # Log the full generated text for debugging (first 1000 chars)
+            logger.debug(f"Full generated text sample: {text[:1000]}...")
+
             # Try to find JSON content
             json_start = text.find('{')
             if json_start == -1:
                 logger.warning("No JSON start found in generated text")
+                logger.debug(f"Full generated text: {text}")
                 return None
 
             json_end = text.rfind('}')
             if json_end == -1 or json_end <= json_start:
                 logger.warning("No valid JSON end found in generated text")
+                logger.debug(f"Full generated text: {text}")
                 return None
 
             json_str = text[json_start:json_end + 1]
+            logger.debug(f"Extracted JSON string: {json_str[:500]}...")
 
             try:
                 quiz_data = json.loads(json_str)
+                logger.info("Successfully parsed JSON on first attempt")
             except json.JSONDecodeError as e:
                 logger.error(f"JSON decode error: {e}")
+                logger.debug(f"Problematic JSON around error: {json_str[max(0, e.pos-50):e.pos+50]}")
+
                 # Try to fix common JSON issues
+                logger.info("Attempting to fix JSON issues...")
                 json_str = self._fix_json_issues(json_str)
+                logger.debug(f"Fixed JSON string: {json_str[:500]}...")
+
                 try:
                     quiz_data = json.loads(json_str)
+                    logger.info("Successfully parsed JSON after fixes")
                 except json.JSONDecodeError as e2:
                     logger.error(f"JSON still invalid after fixes: {e2}")
-                    return None
+                    logger.debug(f"Final JSON that failed: {json_str}")
+
+                    # Try one more aggressive fix - extract just the structure we need
+                    logger.info("Attempting aggressive JSON reconstruction...")
+                    quiz_data = self._reconstruct_quiz_json(text, subject, difficulty, num_questions)  # Use full text, not just json_str
+                    if not quiz_data:
+                        return None
 
             # Validate the structure
             if self._validate_quiz_structure(quiz_data, num_questions):
@@ -308,20 +328,65 @@ Please provide ONLY the JSON response, no additional text."""
 
         except Exception as e:
             logger.error(f"Error parsing generated quiz: {e}")
+            logger.debug(f"Full generated text that caused error: {generated_text}")
             return None
 
     def _fix_json_issues(self, json_str: str) -> str:
-        """Fix common JSON issues in generated text"""
-        # Remove any trailing commas
-        json_str = json_str.replace(',}', '}').replace(',]', ']')
+        """Fix common JSON issues in generated text with improved handling"""
+        import re
 
-        # Fix newlines in strings
-        json_str = json_str.replace('\n', '\\n')
+        logger.info("Applying comprehensive JSON fixes...")
 
-        # Fix quotes
+        # First, let's log the original to see what we're working with
+        logger.debug(f"Original JSON snippet: {json_str[:200]}...")
+
+        # Remove any trailing commas before closing braces/brackets
+        json_str = re.sub(r',(\s*[}\]])', r'\1', json_str)
+
+        # Fix common quote issues
         json_str = json_str.replace('"', '"').replace('"', '"')
         json_str = json_str.replace(''', "'").replace(''', "'")
 
+        # Handle newlines in strings properly
+        json_str = json_str.replace('\n', '\\n').replace('\r', '\\r').replace('\t', '\\t')
+
+        # Fix unquoted property names - more comprehensive approach
+        # This handles cases like: subject: "value", id: 1, etc.
+        json_str = re.sub(r'(\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:', r'\1"\2":', json_str)
+
+        # Fix single quotes to double quotes, but be careful with nested quotes
+        # First protect any escaped quotes
+        json_str = json_str.replace("\\'", "__ESCAPED_QUOTE__")
+        json_str = json_str.replace('\\"', "__ESCAPED_DOUBLE_QUOTE__")
+
+        # Now replace single quotes with double quotes
+        json_str = re.sub(r"'([^']*)'", r'"\1"', json_str)
+
+        # Restore escaped quotes
+        json_str = json_str.replace("__ESCAPED_QUOTE__", "\\'")
+        json_str = json_str.replace("__ESCAPED_DOUBLE_QUOTE__", '\\"')
+
+        # Fix property names that might still be unquoted after options object
+        # Handle cases like: A: "option", B: "option", etc.
+        json_str = re.sub(r'([ABCD])\s*:', r'"\1":', json_str)
+
+        # Fix boolean and null values
+        json_str = re.sub(r'\b(true|false|null)\b', lambda m: m.group(1).lower(), json_str, flags=re.IGNORECASE)
+
+        # Fix common formatting issues
+        json_str = re.sub(r'\s*,\s*', ', ', json_str)  # Normalize comma spacing
+        json_str = re.sub(r'\s*:\s*', ': ', json_str)  # Normalize colon spacing
+
+        # Fix bracket/brace spacing
+        json_str = re.sub(r'\{\s+', '{ ', json_str)
+        json_str = re.sub(r'\s+\}', ' }', json_str)
+        json_str = re.sub(r'\[\s+', '[ ', json_str)
+        json_str = re.sub(r'\s+\]', ' ]', json_str)
+
+        # Remove extra whitespace but preserve structure
+        json_str = re.sub(r'\n\s*\n', '\n', json_str)  # Remove empty lines
+
+        logger.debug(f"Fixed JSON snippet: {json_str[:200]}...")
         return json_str
 
     def _validate_quiz_structure(self, quiz_data: Dict, expected_questions: int) -> bool:
@@ -715,5 +780,165 @@ Please provide ONLY the JSON response, no additional text."""
         ])
 
         return recommendations[:5]
+
+    def _reconstruct_quiz_json(self, malformed_json: str, subject: str, difficulty: str, num_questions: int) -> Dict[str, Any]:
+        """Attempt to reconstruct quiz JSON from severely malformed text"""
+        import re
+
+        try:
+            logger.info("Attempting to reconstruct quiz JSON from malformed text")
+            logger.debug(f"Malformed JSON sample: {malformed_json[:500]}...")
+
+            # Try to extract questions using regex patterns
+            questions = []
+
+            # Look for question patterns - various formats
+            question_patterns = [
+                r'"question"["\']?\s*:\s*["\']([^"\']+)["\']',
+                r'question["\']?\s*:\s*["\']([^"\']+)["\']',
+                r'"question"["\']?\s*:\s*"([^"]+)"',
+                r'question["\']?\s*:\s*"([^"]+)"',
+                r'"question"["\']?\s*:\s*\'([^\']+)\'',
+                r'question["\']?\s*:\s*\'([^\']+)\'',
+                r'Question\s*\d*[:\-]?\s*([^?\n]*\?)',  # Match questions ending with ?
+                r'Q\d*[:\-]?\s*([^?\n]*\?)'  # Match Q1: format
+            ]
+
+            # Look for options patterns - more flexible
+            option_patterns = [
+                # Standard JSON format
+                r'"options"["\']?\s*:\s*\{\s*"A"["\']?\s*:\s*["\']([^"\']+)["\'][,\s]*"B"["\']?\s*:\s*["\']([^"\']+)["\'][,\s]*"C"["\']?\s*:\s*["\']([^"\']+)["\'][,\s]*"D"["\']?\s*:\s*["\']([^"\']+)["\']',
+                # Without quotes around keys
+                r'"options"["\']?\s*:\s*\{\s*A["\']?\s*:\s*["\']([^"\']+)["\'][,\s]*B["\']?\s*:\s*["\']([^"\']+)["\'][,\s]*C["\']?\s*:\s*["\']([^"\']+)["\'][,\s]*D["\']?\s*:\s*["\']([^"\']+)["\']',
+                # Simple format: A) option B) option
+                r'A\)\s*([^\n]+)\s*B\)\s*([^\n]+)\s*C\)\s*([^\n]+)\s*D\)\s*([^\n]+)',
+                # Simple format: A: option B: option
+                r'A:\s*([^\n]+)\s*B:\s*([^\n]+)\s*C:\s*([^\n]+)\s*D:\s*([^\n]+)',
+                # Format with quotes: "A": "option"
+                r'"A":\s*"([^"]+)"\s*,?\s*"B":\s*"([^"]+)"\s*,?\s*"C":\s*"([^"]+)"\s*,?\s*"D":\s*"([^"]+)"'
+            ]
+
+            # Look for correct answer patterns
+            answer_patterns = [
+                r'"correct_answer"["\']?\s*:\s*["\']([ABCD])["\']',
+                r'correct_answer["\']?\s*:\s*["\']([ABCD])["\']',
+                r'Answer[:\-\s]*([ABCD])',
+                r'Correct[:\-\s]*([ABCD])',
+                r'answer[:\-\s]*([ABCD])'
+            ]
+
+            # Look for explanation patterns
+            explanation_patterns = [
+                r'"explanation"["\']?\s*:\s*["\']([^"\']+)["\']',
+                r'explanation["\']?\s*:\s*["\']([^"\']+)["\']',
+                r'Explanation[:\-]\s*([^\n]+)',
+                r'Because[:\-]?\s*([^\n]+)',
+                r'This is because[:\-]?\s*([^\n]+)'
+            ]
+
+            # Try to find all questions, options, answers, and explanations
+            found_questions = []
+            found_options = []
+            found_answers = []
+            found_explanations = []
+
+            # Search for questions
+            for pattern in question_patterns:
+                matches = re.findall(pattern, malformed_json, re.IGNORECASE | re.DOTALL)
+                if matches:
+                    found_questions.extend([match.strip() for match in matches])
+
+            # Search for options (this is trickier)
+            for pattern in option_patterns:
+                matches = re.findall(pattern, malformed_json, re.IGNORECASE | re.DOTALL)
+                if matches:
+                    found_options.extend(matches)
+
+            # Search for answers
+            for pattern in answer_patterns:
+                matches = re.findall(pattern, malformed_json, re.IGNORECASE)
+                if matches:
+                    found_answers.extend([match.strip().upper() for match in matches])
+
+            # Search for explanations
+            for pattern in explanation_patterns:
+                matches = re.findall(pattern, malformed_json, re.IGNORECASE | re.DOTALL)
+                if matches:
+                    found_explanations.extend([match.strip() for match in matches])
+
+            logger.info(f"Found {len(found_questions)} questions, {len(found_options)} option sets, {len(found_answers)} answers, {len(found_explanations)} explanations")
+
+            # If we still don't have options, try a different approach
+            if not found_options and found_questions:
+                logger.info("Trying alternative option extraction...")
+                # Try to find options in a different way - look for A, B, C, D patterns near questions
+                alt_option_pattern = r'(?:A[:\)\.])\s*([^\n\r]+)(?:\s*B[:\)\.])\s*([^\n\r]+)(?:\s*C[:\)\.])\s*([^\n\r]+)(?:\s*D[:\)\.])\s*([^\n\r]+)'
+                alt_matches = re.findall(alt_option_pattern, malformed_json, re.IGNORECASE | re.DOTALL)
+                if alt_matches:
+                    found_options.extend(alt_matches)
+                    logger.info(f"Found {len(alt_matches)} option sets using alternative pattern")
+
+            # Reconstruct questions
+            max_items = min(len(found_questions), max(len(found_options), 1))  # At least try with 1 if we have questions
+
+            if max_items == 0:
+                logger.warning("Could not extract any valid question data")
+                return None
+
+            # Pad missing data
+            while len(found_answers) < max_items:
+                found_answers.append("A")  # Default answer
+
+            while len(found_explanations) < max_items:
+                found_explanations.append(f"This tests knowledge of {subject.lower()} concepts.")
+
+            # Build questions array
+            for i in range(min(max_items, num_questions)):
+                # Handle options
+                if i < len(found_options) and found_options[i] and len(found_options[i]) >= 4:
+                    # We have proper options
+                    options = {
+                        "A": str(found_options[i][0]).strip(),
+                        "B": str(found_options[i][1]).strip(),
+                        "C": str(found_options[i][2]).strip(),
+                        "D": str(found_options[i][3]).strip()
+                    }
+                else:
+                    # Generate default options
+                    options = {
+                        "A": f"Option A for {subject.lower()}",
+                        "B": f"Option B for {subject.lower()}",
+                        "C": f"Option C for {subject.lower()}",
+                        "D": f"Option D for {subject.lower()}"
+                    }
+
+                question = {
+                    "id": i + 1,
+                    "question": found_questions[i] if i < len(found_questions) else f"Question {i+1} about {subject}",
+                    "options": options,
+                    "correct_answer": found_answers[i] if i < len(found_answers) else "A",
+                    "explanation": found_explanations[i] if i < len(found_explanations) else f"This tests {subject.lower()} knowledge.",
+                    "topic": f"{subject} Concepts"
+                }
+                questions.append(question)
+
+            if not questions:
+                logger.warning("No valid questions could be reconstructed")
+                return None
+
+            # Build final quiz structure
+            reconstructed_quiz = {
+                "subject": subject,
+                "difficulty": difficulty,
+                "total_questions": len(questions),
+                "questions": questions
+            }
+
+            logger.info(f"Successfully reconstructed quiz with {len(questions)} questions")
+            return reconstructed_quiz
+
+        except Exception as e:
+            logger.error(f"Error in JSON reconstruction: {e}")
+            return None
 
 
