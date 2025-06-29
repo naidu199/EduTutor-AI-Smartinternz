@@ -1129,6 +1129,7 @@ dependencies = [
     { name = "djaodjin-pages" },
     { name = "pandas" },
     { name = "plotly" },
+    { name = "requests" },
     { name = "streamlit" },
 ]
 
@@ -1137,6 +1138,7 @@ requires-dist = [
     { name = "djaodjin-pages", specifier = ">=0.8.4" },
     { name = "pandas", specifier = ">=2.3.0" },
     { name = "plotly", specifier = ">=6.2.0" },
+    { name = "requests", specifier = ">=2.32.4" },
     { name = "streamlit", specifier = ">=1.46.1" },
 ]
 
